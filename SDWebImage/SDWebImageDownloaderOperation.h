@@ -10,11 +10,6 @@
 #import "SDWebImageDownloader.h"
 #import "SDWebImageOperation.h"
 
-extern NSString *const SDWebImageDownloadStartNotification;
-extern NSString *const SDWebImageDownloadReceiveResponseNotification;
-extern NSString *const SDWebImageDownloadStopNotification;
-extern NSString *const SDWebImageDownloadFinishNotification;
-
 @interface SDWebImageDownloaderOperation : NSOperation <SDWebImageOperation>
 
 /**
@@ -44,15 +39,7 @@ extern NSString *const SDWebImageDownloadFinishNotification;
  */
 @property (assign, nonatomic, readonly) SDWebImageDownloaderOptions options;
 
-/**
- * The expected size of data.
- */
-@property (assign, nonatomic) NSInteger expectedSize;
-
-/**
- * The response returned by the operation's connection.
- */
-@property (strong, nonatomic) NSURLResponse *response;
+@property (nonatomic, assign, readonly) CGSize estimateSize;
 
 /**
  *  Initializes a `SDWebImageDownloaderOperation` object
@@ -71,6 +58,13 @@ extern NSString *const SDWebImageDownloadFinishNotification;
  */
 - (id)initWithRequest:(NSURLRequest *)request
               options:(SDWebImageDownloaderOptions)options
+             progress:(SDWebImageDownloaderProgressBlock)progressBlock
+            completed:(SDWebImageDownloaderCompletedBlock)completedBlock
+            cancelled:(SDWebImageNoParamsBlock)cancelBlock;
+
+- (id)initWithRequest:(NSURLRequest *)request
+              options:(SDWebImageDownloaderOptions)options
+         estimateSize:(CGSize)estimateSize
              progress:(SDWebImageDownloaderProgressBlock)progressBlock
             completed:(SDWebImageDownloaderCompletedBlock)completedBlock
             cancelled:(SDWebImageNoParamsBlock)cancelBlock;

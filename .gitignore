@@ -27,3 +27,6 @@ DerivedData
 #
 Pods/
 Podfile.lock
+.DS_Store
+Examples/.DS_Store
+Tests/.DS_Store
