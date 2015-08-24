@@ -17,4 +17,6 @@
 
 + (UIImage *)decodedImageWithImage:(UIImage *)image estimateSize:(CGSize)estimate;
 
++ (UIImage *)decodedImageWithELongImage:(UIImage *)image;
+
 @end

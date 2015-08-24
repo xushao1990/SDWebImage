@@ -127,4 +127,22 @@
     return decompressedImage;
 }
 
++ (UIImage *)decodedImageWithELongImage:(UIImage *)image
+{
+    if (image.images) {
+        // Do not decode animated images
+        return image;
+    }
+    
+    CGImageRef imageRef = image.CGImage;
+    
+    CGSize imageSize = CGSizeMake(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
+    CGSize size = [self imageSize:imageSize whiteSpaceSize:imageRef];
+    CGRect smallBounds = CGRectMake(size.width, size.height, imageSize.width - size.width * 2, imageSize.height - size.height * 2);
+    CGImageRef cuttedImageRef = CGImageCreateWithImageInRect(imageRef, smallBounds);
+    UIImage *image = [UIImage imageWithCGImage:cuttedImageRef];
+    CGImageRelease(cuttedImageRef);
+    return image;
+}
+
 @end

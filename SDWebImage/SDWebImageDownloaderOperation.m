@@ -396,7 +396,13 @@
             // Do not force decoding animated GIFs
             if (!image.images) {
                 if (self.shouldDecompressImages) {
-                    image = [UIImage decodedImageWithImage:image estimateSize:self.estimateSize];
+                    if ([aConnection.originalRequest.URL.absoluteString rangeOfString:@"elong"].location != NSNotFound) {
+                        image = [UIImage decodedImageWithELongImage:image];
+                        self.imageData = nil;
+                        self.imageData = UIImageJPEGRepresentation(image, 1.0).mutableCopy;
+                    }else{
+                        image = [UIImage decodedImageWithImage:image estimateSize:self.estimateSize];
+                    }
                 }
             }
             if (CGSizeEqualToSize(image.size, CGSizeZero)) {
