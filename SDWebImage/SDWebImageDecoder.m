@@ -140,9 +140,54 @@
     CGSize size = [self imageSize:imageSize whiteSpaceSize:imageRef];
     CGRect smallBounds = CGRectMake(size.width, size.height, imageSize.width - size.width * 2, imageSize.height - size.height * 2);
     CGImageRef cuttedImageRef = CGImageCreateWithImageInRect(imageRef, smallBounds);
-    UIImage *image = [UIImage imageWithCGImage:cuttedImageRef];
+    UIImage *cuttedImage = [UIImage imageWithCGImage:cuttedImageRef];
     CGImageRelease(cuttedImageRef);
-    return image;
+    return cuttedImage;
+}
+typedef enum {
+    ALPHA = 0,
+    BLUE = 1,
+    GREEN = 2,
+    RED = 3
+} PIXELS;
+
++ (CGSize)imageSize:(CGSize)imageSize whiteSpaceSize:(CGImageRef)imageRef
+{
+    int width = imageSize.width;
+    int height = imageSize.height;
+    
+    uint32_t *pixels = (uint32_t *) malloc(width * height * sizeof(uint32_t));
+    
+    memset(pixels, 0, width * height * sizeof(uint32_t));
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    CGContextRef context = CGBitmapContextCreate(pixels, width, height, 8, width * sizeof(uint32_t), colorSpace,kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedLast);
+    
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), imageRef);
+    CGSize size = CGSizeZero;
+    BOOL hasFound = NO;
+    for(int y = 0; y < height; y++) {
+        if (hasFound) break;
+        for(int x = 0; x < width; x++) {
+            if (hasFound) break;
+            uint8_t *rgbaPixel = (uint8_t *) &pixels[y * width + x];
+            if (rgbaPixel[RED] != 255 && rgbaPixel[GREEN] != 255 && rgbaPixel[BLUE] != 255) {
+                size.width = x;
+                size.height = y;
+                hasFound = YES;
+            }
+        }
+    }
+    
+    CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+    free(pixels);
+    
+    size.width += 10;
+    size.height += 10;
+    
+    return size;
 }
 
 @end
