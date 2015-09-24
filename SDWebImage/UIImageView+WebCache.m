@@ -98,7 +98,11 @@ static char imageURLKey;
                 if (!wself) return;
                 if (image) {
                     wself.image = image;
-                    [wself setNeedsLayout];
+                    CATransition *animation = [CATransition animation];
+                    [animation setDuration:0.3];
+                    [animation setTimingFunction:UIViewAnimationCurveEaseInOut];
+                    [animation setType:kCATransitionFade];
+                    [wself.layer addAnimation:animation forKey:@"FadeImageAnimation"];
                 } else {
                     if ((options & SDWebImageDelayPlaceholder)) {
                         wself.image = placeholder;
@@ -165,6 +169,7 @@ static char imageURLKey;
 }
 
 - (void)sd_cancelCurrentImageLoad {
+    [self.layer removeAnimationForKey:@"FadeImageAnimation"];
     [self sd_cancelImageLoadOperationWithKey:@"UIImageViewImageLoad"];
 }
 
